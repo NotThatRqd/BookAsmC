@@ -51,14 +51,15 @@ bool startsWith(const char *pre, const char *str)
 
 void displayHelp(void)
 {
-    printf("Book Asm is based on the idea of an imaginary tape, like a turing machine.\n");
-    printf("You start at index 0, or at the left most of the tape. Using < you can move left, and using > you can move right.\n");
-    printf("To flip the current bit on the tape, use !.\n");
-    printf("To get the user input and set it to the current bit, use @.\n");
-    printf("To display the current bit, use #.\n");
-    printf("To reset to the start of the tape, use r.\n");
-    printf("There is a more special character, c. The c command will take the current and next 7 bits (8 bits in total) and convert them into a number. It will then print that number's Ascii character\n");
-    printf("For example, the letter c in ascii is 99, in binary 99 is 01100011. To print c, you could use this program: >!>!>>>>!>!rc\n");
+    // printf("Book Asm is based on the idea of an imaginary tape, like a turing machine.\n");
+    // printf("You start at index 0, or at the left most of the tape. Using < you can move left, and using > you can move right.\n");
+    // printf("To flip the current bit on the tape, use !.\n");
+    // printf("To get the user input and set it to the current bit, use @.\n");
+    // printf("To display the current bit, use #.\n");
+    // printf("To reset to the start of the tape, use r.\n");
+    // printf("There is a more special character, c. The c command will take the current and next 7 bits (8 bits in total) and convert them into a number. It will then print that number's Ascii character\n");
+    // printf("For example, the letter c in ascii is 99, in binary 99 is 01100011. To print c, you could use this program: >!>!>>>>!>!rc\n");
+    printf("Check Book Asm's Github Repo for help.");
     getchar();
 }
 
@@ -125,6 +126,19 @@ int main(void)
 
                 printf("%c", binaryToDecimal(bin));
                 break;
+
+            case ':':
+                // comment
+                for(int j = 1; true; i++)
+                {
+                    if(input[i + j] == ';')
+                    {
+                        i = i + j;
+                        break;
+                    }
+                }
+                break;
+                
             default:
                 printf("Unknown token: %c\n", input[i]);
                 break;
