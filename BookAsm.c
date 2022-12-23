@@ -98,14 +98,14 @@ int main(void)
                 break;
             case '@':
                 // get user input
-                printf("\nEnter 0 or 1: ");
+                printf("Enter 0 or 1: ");
                 int temp;
                 scanf("%d", &temp);
                 roll[cur] = temp;
                 break;
             case '#':
                 // print current bit
-                printf("\n%d", roll[cur]);
+                printf("%d", roll[cur]);
                 break;
 
             case 'r':
@@ -138,7 +138,7 @@ int main(void)
                     }
                 }
                 break;
-                
+
             default:
                 printf("Unknown token: %c\n", input[i]);
                 break;
