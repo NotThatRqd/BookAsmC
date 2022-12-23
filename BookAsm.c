@@ -42,11 +42,38 @@ char *inputString(FILE* fp, size_t size)
     return realloc(str, sizeof(*str)*len);
 }
 
+bool startsWith(const char *pre, const char *str)
+{
+    size_t lenpre = strlen(pre),
+           lenstr = strlen(str);
+    return lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
+}
+
+void displayHelp(void)
+{
+    printf("Book Asm is based on the idea of an imaginary tape, like a turing machine.\n");
+    printf("You start at index 0, or at the left most of the tape. Using < you can move left, and using > you can move right.\n");
+    printf("To flip the current bit on the tape, use !.\n");
+    printf("To get the user input and set it to the current bit, use @.\n");
+    printf("To display the current bit, use #.\n");
+    printf("To reset to the start of the tape, use r.\n");
+    printf("There is a more special character, c. The c command will take the current and next 7 bits (8 bits in total) and convert them into a number. It will then print that number's Ascii character\n");
+    printf("For example, the letter c in ascii is 99, in binary 99 is 01100011. To print c, you could use this program: >!>!>>>>!>!rc\n");
+    getchar();
+}
+
 int main(void)
 {
     char *input;
+    printf("Type ~h for help.\n");
     printf("Enter Book Asm:\n");
     input = inputString(stdin, 10);
+
+    if(startsWith("~h", input))
+    {
+        displayHelp();
+        return 0;
+    }
 
     bool roll[16] = {false};
 
