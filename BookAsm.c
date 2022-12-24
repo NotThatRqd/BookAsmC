@@ -63,53 +63,52 @@ void displayHelp(void)
     getchar();
 }
 
-int main(void)
+void runToks(char *input, int inputLen, char *cur, bool *roll)
 {
-    char *input;
-    printf("Type ~h for help.\n");
-    printf("Enter Book Asm:\n");
-    input = inputString(stdin, 10);
-
-    if(startsWith("~h", input))
-    {
-        displayHelp();
-        return 0;
-    }
-
-    bool roll[16] = {false};
-
-    printf("Output:\n");
-
-    // loop over input
-    char cur = 0;
-    for(int i = 0; i < strlen(input); i++)
+    //printf("input: %s  len: %d\n", input, inputLen);
+    for(int i = 0; i < inputLen; i++)
     {
         switch (input[i])
         {
             case '<':
-                cur -= 1;
+                if(*cur == 0)
+                {
+                    *cur = 64;
+                }
+                else
+                {
+                    *cur -= 1;
+                }
                 break;
             case '>':
-                cur += 1;
+                if(*cur == 63)
+                {
+                    *cur = 0;
+                }
+                else
+                {
+                    *cur += 1;
+                }
                 break;
             case '!':
                 // flip bit
-                roll[cur] = !(roll[cur]);
+                roll[*cur] = !(roll[*cur]);
                 break;
             case '@':
                 // get user input
                 printf("Enter 0 or 1: ");
                 int temp;
                 scanf("%d", &temp);
-                roll[cur] = temp;
+                roll[*cur] = temp;
                 break;
             case '#':
                 // print current bit
-                printf("%d", roll[cur]);
+                printf("%d", roll[*cur]);
                 break;
 
             case 'r':
-                cur = 0;
+                // reset cur
+                *cur = 0;
                 break;
 
             case 'c': ;
@@ -120,11 +119,40 @@ int main(void)
                 int toPow = pow(10, 7);
                 for(int i = 0; i < 8; i++)
                 {
-                    bin += roll[cur + i] * toPow;
+                    bin += roll[*cur + i] * toPow;
                     toPow = toPow / 10;
                 }
 
                 printf("%c", binaryToDecimal(bin));
+                break;
+
+            case 'i':
+                // skip over the i
+                i++;
+                if(input[i] != '{')
+                {
+                    printf("Expected opening curly brace, found: %c", input[i]);
+                    break;
+                }
+                char *closing = strchr(&input[i], '}');
+                if(!closing)
+                {
+                    printf("Could not find closing curly brace.");
+                    break;
+                }
+                
+                if(roll[*cur])
+                {
+                    runToks(&input[i + 1], (int) (closing - &input[i + 1]), cur, roll);
+                }
+
+
+                i = closing - input;
+                break;
+
+            case 's':
+                // print a smile
+                printf("%c", 1);
                 break;
 
             case ':':
@@ -144,6 +172,29 @@ int main(void)
                 break;
         }
     }
+}
+
+int main(void)
+{
+    char *input;
+    printf("Type ~h for help.\n");
+    printf("Enter Book Asm:\n");
+    input = inputString(stdin, 10);
+
+    if(startsWith("~h", input))
+    {
+        displayHelp();
+        return 0;
+    }
+
+    bool roll[64] = {false};
+
+    printf("Output:\n");
+
+    // loop over input
+    char cur = 0;
+
+    runToks(input, strlen(input), &cur, roll);
 
     free(input);
 
