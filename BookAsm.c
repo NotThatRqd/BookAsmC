@@ -138,11 +138,11 @@ void runToks(char *input, int inputLen, char *cur, bool *roll)
                 int openingBraceCount = 0;
                 for(int j = i + 1; j < inputLen; j++)
                 {
-                    if(input[j] == "{")
+                    if(input[j] == '{')
                     {
                         openingBraceCount++;
                     }
-                    else if(input[j] == "}")
+                    else if(input[j] == '}')
                     {
                         if(openingBraceCount == 0)
                         {
@@ -219,11 +219,8 @@ int main(void)
 
         bool roll[64] = {false};
 
-        //printf("Output:\n");
-
         // loop over input
         char cur = 0;
-
         runToks(input, strlen(input), &cur, roll);
 
         free(input);
