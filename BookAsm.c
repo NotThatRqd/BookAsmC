@@ -59,8 +59,7 @@ void displayHelp(void)
     // printf("To reset to the start of the tape, use r.\n");
     // printf("There is a more special character, c. The c command will take the current and next 7 bits (8 bits in total) and convert them into a number. It will then print that number's Ascii character\n");
     // printf("For example, the letter c in ascii is 99, in binary 99 is 01100011. To print c, you could use this program: >!>!>>>>!>!rc\n");
-    printf("Check Book Asm's Github Repo for help.");
-    getchar();
+    printf("Check Book Asm's Github Repo for help.\n");
 }
 
 void runToks(char *input, int inputLen, char *cur, bool *roll)
@@ -134,7 +133,29 @@ void runToks(char *input, int inputLen, char *cur, bool *roll)
                     printf("Expected opening curly brace, found: %c", input[i]);
                     break;
                 }
-                char *closing = strchr(&input[i], '}');
+
+                char *closing;
+                int openingBraceCount = 0;
+                for(int j = i + 1; j < inputLen; j++)
+                {
+                    if(input[j] == "{")
+                    {
+                        openingBraceCount++;
+                    }
+                    else if(input[j] == "}")
+                    {
+                        if(openingBraceCount == 0)
+                        {
+                            closing = &input[j];
+                            break;
+                        }
+                        else
+                        {
+                            openingBraceCount--;
+                        }
+                    }
+                }
+
                 if(!closing)
                 {
                     printf("Could not find closing curly brace.");
@@ -176,29 +197,38 @@ void runToks(char *input, int inputLen, char *cur, bool *roll)
 
 int main(void)
 {
-    char *input;
-    printf("Type ~h for help.\n");
-    printf("Enter Book Asm:\n");
-    input = inputString(stdin, 10);
+    printf("Type ~h for help. Type ~q to quit.");
 
-    if(startsWith("~h", input))
+    do
     {
-        displayHelp();
-        return 0;
+        printf("\n$ ");
+        char *input = inputString(stdin, 10);
+
+        if(startsWith("~h", input))
+        {
+            displayHelp();
+            free(input);
+            continue;;
+        }
+
+        if(startsWith("~q", input))
+        {
+            free(input);
+            break;
+        }
+
+        bool roll[64] = {false};
+
+        //printf("Output:\n");
+
+        // loop over input
+        char cur = 0;
+
+        runToks(input, strlen(input), &cur, roll);
+
+        free(input);
     }
+    while(true);
 
-    bool roll[64] = {false};
-
-    printf("Output:\n");
-
-    // loop over input
-    char cur = 0;
-
-    runToks(input, strlen(input), &cur, roll);
-
-    free(input);
-
-    // stop execution until key pressed so people running via double-clicking the icon can see the output
-    getchar();
     return 0;
 }
